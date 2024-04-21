@@ -41,6 +41,10 @@
 
 <div class="container">
     <h1>{{$user->name}}</h1>
+    <form action="{{route('profile.update', $user)}}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">Change info</button>
+    </form>
     <h2>Bookshelf</h2>
     <ul class="nav nav-tabs">
         <li class="nav-item">

@@ -12,6 +12,7 @@
 
     <a href="{{ route('admin.manage-users') }}" class="btn btn-primary">Manage Users</a>
     <a href="{{ route('admin.add-book') }}" class="btn btn-primary">Add Book</a>
+    <a href="{{ route('admin.manage-rent') }}" class="btn btn-primary">Add Book</a>
 
     <div class="content">
     </div>

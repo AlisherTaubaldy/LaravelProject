@@ -46,7 +46,8 @@
 
     <h2>Add a Review</h2>
 
-    @if (Auth::check())  <form action="{{ route('store.review', $book->id) }}" method="POST">
+    @if (Auth::check())
+        <form action="{{ route('store.review', $book->id) }}" method="POST">
         @csrf <div class="form-group">
             <label for="comment">Your Review:</label>
             <textarea class="form-control @error('comment') is-invalid @enderror" id="comment" name="comment" rows="3"></textarea>

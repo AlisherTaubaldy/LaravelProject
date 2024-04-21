@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentController;
 use App\Http\Controllers\ReserveController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsAdmin;
 use App\Mail\RentMail;
 use Illuminate\Support\Facades\Mail;
@@ -45,9 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/reserve-book/{book_id}', [ReserveController::class, 'reserveBook'])->name('books.reserve-book');
     Route::post('/books/cancel-reservation/{book_id}', [ReserveController::class, 'cancelReservation'])->name('books.cancel-reservation');
 
+    Route::post('/profile/update-user/{user}', [ProfileController::class, 'updatePage'])->name('profile.update');
+    Route::put('/profile/update-user/{user}', [UserController::class, 'update'])->name('profile.update');
+
+
     Route::post('/books/extend-rent/{book_id}', [ProfileController::class, 'extendRentment'])->name('books.extend-rent');
 
     Route::post('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
+    Route::get('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
 
     Route::get('/testroute', [ProfileController::class, 'reservedBooks']);
 
@@ -56,14 +62,13 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(IsAdmin::class)->group(function (){
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
-    Route::get('/admin/book-rents', [RentController::class, 'getRents']);
-    Route::get('/admin/book-reservements', [ReserveController::class, 'getReservements']);
+    Route::get('/admin/book-rents', [AdminController::class, 'rentment'])->name('admin.manage-rent');
 
     Route::get('/admin/manage-users', [AdminController::class, 'manageUsers'])->name('admin.manage-users');
 
     Route::get('/admin/manage-users/update-user/{user_id}', [AdminController::class, 'updateUserPage'])->name('admin.manage-users.update');
-    Route::put('/admin/manage-users/update-user/{user}', [AdminController::class, 'updateUser'])->name('admin.manage-users.update-user');
-    Route::delete('/admin/manage-users/delete-user/{user}', [AdminController::class, 'deleteUser'])->name('admin.manage-users.delete');
+    Route::put('/admin/manage-users/update-user/{user}', [UserController::class, 'update'])->name('admin.manage-users.update-user');
+    Route::delete('/admin/manage-users/delete-user/{user}', [UserController::class, 'delete'])->name('admin.manage-users.delete');
 
     Route::get('/admin/add-book', [AdminController::class, 'addBookPage'])->name('admin.add-book');
     Route::post('/admin/add-book', [AdminController::class, 'create'])->name('admin.create');

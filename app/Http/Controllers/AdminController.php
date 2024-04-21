@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\BookRent;
 use App\Models\Category;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -57,19 +59,6 @@ class AdminController extends Controller
         return redirect()->route('books.index')->with('success', 'Book added successfully!');
     }
 
-    public function updateUser(Request $request, User $user)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255', // Rule for name field
-            'email' => 'required|email|max:255', // Rule for email field
-            'address' => 'nullable|string|max:255'
-        ]);
-
-        $user->update($validatedData);
-
-        return redirect()->route('admin.manage-users')->with('success', 'User updated successfully!');
-    }
-
     public function updateUserPage(Request $request, $user_id)
     {
         $user = User::find($user_id);
@@ -77,10 +66,26 @@ class AdminController extends Controller
         return view('admin.update-user', compact('user'));
     }
 
-    public function deleteUser(User $user)
+    public function rentment()
     {
-        $user->delete();
+        $rentals = BookRent::orderByRaw('returned_at IS NULL DESC, returned_at DESC')
+            ->get();
 
-        return redirect()->route('admin.manage-users')->with('success', 'User deleted successfully!');
+        foreach ($rentals as $rental){
+            $rental->rental_date = Carbon::parse($rental->rental_date)->format('d F y');
+            $rental->return_date = Carbon::parse($rental->return_date)->format('d F y');
+            if(!is_null($rental->returned_at)){
+                $rental->returned_at = "Not returned yet";
+            }else{
+                $rental->returned_at = Carbon::parse($rental->returned_at)->format('d F y');
+            }
+            if(!$rental->extended_at){
+                $rental->extended = "Not extended yet";
+            }else{
+                $rental->extended = "Extended";
+            }
+        }
+
+        return view('admin.manage-rent', compact('rentals'));
     }
 }

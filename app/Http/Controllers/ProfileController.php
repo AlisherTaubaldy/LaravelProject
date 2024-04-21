@@ -31,7 +31,7 @@ class ProfileController extends Controller
             $book->category = $category->title;
         }
 
-        return view("profile", compact('books', 'user'));
+        return view("profile.profile", compact('books', 'user'));
     }
 
     public function reservedBooks()
@@ -52,7 +52,7 @@ class ProfileController extends Controller
             $book->category = $category->title;
         }
 
-        return view("profile", compact('books', 'user'));
+        return view("profile.profile", compact('books', 'user'));
     }
 
     public function extendRentment($book_id)
@@ -79,5 +79,12 @@ class ProfileController extends Controller
         $book_rent->save();
 
         return response()->json(['message' => 'Book rent extended for 7 days'], 200);
+    }
+
+    public function updatePage($user)
+    {
+        $user = User::find($user);
+
+        return view('profile.update-user', compact('user'));
     }
 }
