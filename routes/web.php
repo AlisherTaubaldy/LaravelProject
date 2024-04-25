@@ -5,10 +5,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RentController;
 use App\Http\Controllers\ReserveController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsAdmin;
@@ -31,7 +33,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/books', [BookController::class, 'index'])->name('books.index');
+    Route::get('/books', [BookController::class, 'show'])->name('books.index');
     // Optional dedicated search route (if desired)
     Route::get('/books/search', [BookController::class, 'index'])->name('books.search');
 
@@ -46,6 +48,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/reserve-book/{book_id}', [ReserveController::class, 'reserveBook'])->name('books.reserve-book');
     Route::post('/books/cancel-reservation/{book_id}', [ReserveController::class, 'cancelReservation'])->name('books.cancel-reservation');
 
+    Route::get('/profile/password/email', [ForgotPasswordController::class, 'getEmail'])->name('password.email');
+    Route::post('/profile/password/request', [ForgotPasswordController::class, 'postEmail'])->name('password.request');
+    Route::get('/profile/password/reset/{token}', [ResetPasswordController::class, 'getForm'])->name('password.reset');
+    Route::post('/profile/password/reset', [ResetPasswordController::class, 'postReset'])->name('password.update');
+
     Route::post('/profile/update-user/{user}', [ProfileController::class, 'updatePage'])->name('profile.update');
     Route::put('/profile/update-user/{user}', [UserController::class, 'update'])->name('profile.update');
 
@@ -55,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
     Route::get('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
 
-    Route::get('/testroute', [ProfileController::class, 'reservedBooks']);
+    Route::get('/testroute', [ForgotPasswordController::class, 'getEmail']);
 
     Route::post('/review/store/{book_id}', [ReviewController::class, 'store'])->name('store.review');
 });
@@ -72,5 +79,4 @@ Route::middleware(IsAdmin::class)->group(function (){
 
     Route::get('/admin/add-book', [AdminController::class, 'addBookPage'])->name('admin.add-book');
     Route::post('/admin/add-book', [AdminController::class, 'create'])->name('admin.create');
-
 });

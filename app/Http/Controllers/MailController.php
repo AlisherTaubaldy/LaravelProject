@@ -14,12 +14,11 @@ class MailController extends Controller
         $name = "Hello world";
 
         try {
-            Mail::to($receipent)->send(new RentMail($name));
-            return "Mail sent successfully!";
+            Mail::to($receipent)->queue(new RentMail($name));
+            return "Mail sent successfully!";//отправка почты через очереди
         } catch (Exception $e) {
             return "Error sending mail: " . $e->getMessage();
         }
 
     }
-
 }

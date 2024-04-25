@@ -20,10 +20,12 @@ class ProfileController extends Controller
 
         $books = DB::table('book_rents')
             ->where('user_id', $user_id)
-            ->whereNull('returned_at')
             ->join('books', 'book_rents.book_id', '=', 'books.id')
             ->select('books.*', 'book_rents.rental_date', 'book_rents.return_date', 'book_rents.returned_at')
+            ->orderByRaw('returned_at IS NULL, returned_at ASC')
             ->get();
+
+        $books->reverse();
 
         foreach ($books as $book){
             $category = Category::find($book->category_id);
@@ -41,9 +43,9 @@ class ProfileController extends Controller
 
         $books = DB::table('book_reservements')
             ->where('user_id', $user_id)
-            ->where('status', 'pending')
             ->join('books', 'book_reservements.book_id', '=', 'books.id')
             ->select('books.*', 'book_reservements.pickup_date', 'book_reservements.return_date', 'book_reservements.status')
+            ->orderBy('status', 'ASC')
             ->get();
 
         foreach ($books as $book){
@@ -86,5 +88,13 @@ class ProfileController extends Controller
         $user = User::find($user);
 
         return view('profile.update-user', compact('user'));
+    }
+
+    public function updatePassword($user){
+        $user = User::find($user);
+
+        $token = bin2hex(random_bytes(16));
+
+
     }
 }

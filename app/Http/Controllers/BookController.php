@@ -9,10 +9,25 @@ use App\Models\BookReservement;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 
 class BookController extends Controller
 {
+    public function show()
+    {
+        $books = Cache::remember('books:all', 60*60, function (){
+            return Book::all();
+        });
+
+        $categories = Cache::remember('categories:all', 60*60, function (){
+            $category = new Category();
+            return $category->getDropdownCategories();
+        });
+
+        return view('book.index', compact('books', 'categories'));
+    }
+
     public function index(Request $request)
     {
         $searchQuery = $request->query('search');

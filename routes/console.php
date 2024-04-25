@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 
 $schedule = new Schedule();
 
-$schedule->command('rentals:check')->daily();
+$schedule->command('check:upcoming-book-returns')->daily();
 
 // Register the schedule with the Laravel application (assuming you're using Artisan)
 $schedule->command('schedule:run');

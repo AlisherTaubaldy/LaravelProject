@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AdminMail;
 use App\Models\Book;
 use App\Models\BookRent;
 use App\Models\BookReservement;
@@ -51,8 +52,9 @@ class ReserveController extends Controller
             if ($book_rent->user_id == $id){
                 return response()->json(['message' => 'Sorry, but you already rented this book and cant reserve it again, Try to extend rentment'], 200);
             }
+            $date_obj = Carbon::parse($book_rent['return_date']);
             $book_reservement->pickup_date = $book_rent->return_date;
-            $book_reservement->return_date = Carbon::parse($book_rent->return_date)->addDays(7);
+            $book_reservement->return_date = $date_obj->addDays(7);
         }else{
             $book_reservement->pickup_date = $date;
             $book_reservement->return_date = $date->addDays(7);
@@ -61,6 +63,9 @@ class ReserveController extends Controller
         $book_reservement->save();
 
         $book->is_available = false;
+
+        Mail::to('shuketsumurano@gmail.com')->send(new AdminMail($book));
+
         $book->save();
 
         return response()->json(['message' => 'Book reserved successfully \n please take it in 3 days'], 200);

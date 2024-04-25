@@ -39,5 +39,17 @@ services:
             PMA_PASSWORD: secret
         depends_on:
             - mysql
+    redis-stack:
+        image: redis/redis-stack  # Use the latest Redis Stack image
+        container_name: laravel-redis-stack
+        restart: always
+        ports:
+            - '6379:6379'  # Map Redis port to host port 6379
+            - '8001:8001'
+        environment:
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+        volumes:
+            - 'redis-data:/data'
 volumes:
     mysql-data: {  }
+    redis-data: { }

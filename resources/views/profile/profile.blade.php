@@ -45,6 +45,10 @@
         @csrf
         <button type="submit" class="btn btn-primary">Change info</button>
     </form>
+    <form action="{{route('password.email')}}" method="GET">
+        @csrf
+        <button type="submit" class="btn btn-primary">Change password</button>
+    </form>
     <h2>Bookshelf</h2>
     <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -67,7 +71,7 @@
                             <p class="card-text">Published Year: {{$book->published_year}}</p>
                             <p class="card-text">ISBN: {{$book->ISBN}}</p>
 
-                            @if (isset($book->status))
+                            @if (isset($book->status) && $book->status == 'pending')
                             <div class="row">
                                 <form action="{{route('books.rent-book', $book->id)}}" method="POST">
                                     @csrf
@@ -78,7 +82,9 @@
                                     <button type="submit" class="btn btn-primary">Cancel Reservation</button>
                                 </form>
                             </div>
-                            @else
+                                <p class="card-text">You need to take this book: {{$book->pickup_date}}</p>
+                                <p class="card-text">You should return book until: {{$book->return_date}}</p>
+                            @elseif (isset($book->returned_at) && is_null($book->returned_at))
                                 <div class="row">
                                     <form action="{{route('books.return-book', $book->id)}}" method="POST">
                                         @csrf
@@ -89,9 +95,15 @@
                                         <button type="submit" class="btn btn-primary">Extend Reservation</button>
                                     </form>
                                 </div>
+                                <p class="card-text">You rented this book: {{$book->rental_date}}</p>
+                                <p class="card-text">You should return book until: {{$book->return_date}}</p>
+                            @elseif(isset($book->status) && $book->status == 'done')
+                                <p class="card-text">You took this book: {{$book->pickup_date}}</p>
+                                <p class="card-text">You returned this book: {{$book->return_date}}</p>
+                            @elseif(isset($book->returned_at)  && !is_null($book->returned_at))
+                                <p class="card-text">You took this book: {{$book->rental_date}}</p>
+                                <p class="card-text">You returned this book: {{$book->return_date}}</p>
                             @endif
-                            <p class="card-text">You rented this book: {{$book->rental_date}}</p>
-                            <p class="card-text">You should return book until: {{$book->return_date}}</p>
                         </div>
                     </div>
                 </div>

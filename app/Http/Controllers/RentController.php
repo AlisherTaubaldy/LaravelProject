@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AdminMail;
 use App\Models\Book;
 use App\Models\BookRent;
 use App\Models\BookReservement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class RentController extends Controller
 {
@@ -56,6 +58,9 @@ class RentController extends Controller
         $book_rent->save();
 
         $book->is_available = false;
+
+        Mail::to('shuketsumurano@gmail.com')->send(new AdminMail($book));
+
         $book->save();
 
         return response()->json(['message' => "Book is rented successfully"], 200);
