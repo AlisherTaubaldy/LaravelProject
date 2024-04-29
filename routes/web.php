@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
     Route::get('/books/book-info/{book}', [BookController::class, 'getMainInfo'])->name('books.book-info');
 
-    Route::get('/testroute', [ForgotPasswordController::class, 'getEmail']);
+    Route::get('/testroute', [RentController::class, 'test']);
 
     Route::post('/review/store/{book_id}', [ReviewController::class, 'store'])->name('store.review');
 });

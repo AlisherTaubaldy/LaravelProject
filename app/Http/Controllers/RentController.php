@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AdminMail;
+use App\Mail\RentMail;
 use App\Models\Book;
 use App\Models\BookRent;
 use App\Models\BookReservement;
@@ -23,6 +24,8 @@ class RentController extends Controller
 
     public function rentBook(Request $request, $book_id){
         $book = Book::findOrFail($book_id);
+
+        $user = Auth::user();
 
         $book_rent = BookRent::where("book_id", $book_id)
             ->first();
@@ -59,7 +62,9 @@ class RentController extends Controller
 
         $book->is_available = false;
 
-        Mail::to('shuketsumurano@gmail.com')->send(new AdminMail($book));
+        Mail::to('shuketsumurano@gmail.com')->send(new RentMail($book, $book_rent));
+
+        Mail::to('alishertaubaldy01@gmail.com')->queue(new AdminMail($book));
 
         $book->save();
 
@@ -87,5 +92,11 @@ class RentController extends Controller
         $book->save();
 
         return response()->json(['message' => 'Book returned successfully'], 200);
+    }
+
+    public function test(){
+        $user = Auth::user();
+
+        dd($user->email);
     }
 }

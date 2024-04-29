@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Models\BookRent;
 use App\Models\BookReservement;
 use App\Models\Category;
+use App\Models\Course;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +18,7 @@ class BookController extends Controller
     public function show()
     {
         $books = Cache::remember('books:all', 60*60, function (){
-            return Book::all();
+            return Book::with('category')->get();
         });
 
         $categories = Cache::remember('categories:all', 60*60, function (){

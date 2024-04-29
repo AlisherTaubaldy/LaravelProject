@@ -9,16 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RentMail extends Mailable
+class RentMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+    public $book = [];
+    public $book_rent = [];
 
     /**
      * Create a new message instance.
      */
-    public function __construct(private $name)
+    public function __construct($book, $book_rent)
     {
-        //
+        $this->book = $book;
+        $this->book_rent = $book_rent;
     }
 
     /**
@@ -38,7 +41,8 @@ class RentMail extends Mailable
     {
         return new Content(
             view: 'email.rentment',
-            with: ['name' => $this->name],
+            with: ['book' => $this->book,
+                'book_rent' => $this->book_rent],
         );
     }
 
